@@ -1,0 +1,42 @@
+package web
+
+func contentOrEmpty(filePath string) string {
+	content, err := ReturnContent(filePath)
+	if err != nil {
+		return ""
+	}
+
+	return content
+}
+
+templ StyleLink(relativePath string) {
+	<link rel="stylesheet" href={ AssetURL(relativePath) }/>
+}
+
+templ ModuleScriptLink(relativePath string) {
+	<script type="module" src={ AssetURL(relativePath) }></script>
+}
+
+templ Style(relativePath string) {
+	{{ content := contentOrEmpty(relativePath) }}
+
+	if content == "" {
+		<script>
+			window.alert("CSS não encontrado");
+		</script>
+	} else {
+		@templ.Raw("<style>\n" + content + "\n</style>")
+	}
+}
+
+templ ModuleScript(relativePath string) {
+	{{ content := contentOrEmpty(relativePath) }}
+
+	if content == "" {
+		<script>
+			window.alert("JavaScript não encontrado");
+		</script>
+	} else {
+		@templ.Raw("<script type=\"module\">\n" + content + "\n</script>")
+	}
+}
