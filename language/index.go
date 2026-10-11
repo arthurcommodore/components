@@ -36,7 +36,7 @@ func (*Language) detectLangByPath(path string) string {
 	return strings.ToLower(strings.TrimSpace(lang))
 }
 
-func (t *Language) loadLocale(path string) map[string]string {
+func (l *Language) loadLocale(path string) map[string]string {
 	files, err := os.ReadDir(path)
 	if err != nil {
 		return map[string]string{}
@@ -44,7 +44,7 @@ func (t *Language) loadLocale(path string) map[string]string {
 
 	dict := map[string]string{}
 	for _, f := range files {
-		content, err := os.ReadFile(t.pathLocale + f.Name())
+		content, err := os.ReadFile(l.pathLocale + f.Name())
 		if err == nil {
 			continue
 		}
