@@ -1,1 +1,2 @@
-go run test/main.go
+pwd
+go run test/cmd/main.go

@@ -7,19 +7,23 @@ import (
 )
 
 type Language struct {
-	pathLocale  string ""
-	localeCache map[string]map[string]string
+	pathLocale      string ""
+	localeCache     map[string]map[string]string
+	defaultLanguage string
 }
 
-func newLanguage(pathLocale string) Language {
+func NewLanguage(pathLocale string, defaultLanguage string) Language {
 	_pathlocale := pathLocale
 	if pathLocale != "" && pathLocale[len(pathLocale)-1] != '/' {
 		_pathlocale = pathLocale + "/"
 	}
-	return Language{
-		pathLocale:  _pathlocale,
-		localeCache: make(map[string]map[string]string),
+	language := Language{
+		pathLocale:      _pathlocale,
+		localeCache:     make(map[string]map[string]string),
+		defaultLanguage: defaultLanguage,
 	}
+	language.injectLocaleCache()
+	return language
 }
 
 func (*Language) detectLangByPath(path string) string {
@@ -32,8 +36,8 @@ func (*Language) detectLangByPath(path string) string {
 	return strings.ToLower(strings.TrimSpace(lang))
 }
 
-func (t *Language) loadLocale() map[string]string {
-	files, err := os.ReadDir(t.pathLocale)
+func (t *Language) loadLocale(path string) map[string]string {
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return map[string]string{}
 	}
@@ -54,7 +58,33 @@ func (t *Language) loadLocale() map[string]string {
 	return dict
 }
 
-func (t *Language) Translator(language string) string {
-	dict := t.loadLocale(language)
-	value, ok := dict[strings.TrimSpace(key)]
+func (l *Language) injectLocaleCache() {
+	langsDir, error := os.ReadDir(l.pathLocale)
+	if error != nil {
+
+	}
+	for _, dir := range langsDir {
+		dirs, error := os.ReadDir(dir.Name())
+		if error != nil {
+
+		}
+		for _, dir := range dirs {
+			l.localeCache[dir.Name()] = l.loadLocale(dir.Name())
+		}
+	}
+}
+
+func (l *Language) Translator(lang string) func(key string, params ...string) string {
+	translatorLang := l.localeCache[lang]
+	return func(key string, params ...string) string {
+		value, ok := translatorLang[strings.TrimSpace(key)]
+		if !ok {
+			return "[" + key + "]"
+		}
+
+		for i := 0; i < len(params)-1; i += 2 {
+			value = strings.ReplaceAll(value, params[i], params[i+1])
+		}
+		return value
+	}
 }
