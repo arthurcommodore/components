@@ -1,4 +1,4 @@
-package web
+package html
 
 import (
 	"crypto/sha256"

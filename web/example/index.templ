@@ -1,6 +1,7 @@
 package example
 
-import "github.com/arthurcommodore/components/web"
+import "github.com/arthurcommodore/components/web/html"
+
 
 templ Page() {
 	<!DOCTYPE html>
@@ -9,7 +10,7 @@ templ Page() {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Meu Projeto Base</title>
-			@web.Style("/home/datm/Documentos/components/web/example/style.css")
+			@html.Style("/home/datm/Documentos/components/web/example/style.css")
 		</head>
 		<body>
 			<header class="header">
