@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 func contentOrEmpty(filePath string) string {
-	content, err := ReturnContent(filePath)
+	content, err := returnContent(filePath)
 	if err != nil {
 		return ""
 	}
@@ -43,7 +43,7 @@ func StyleLink(relativePath string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 templ.SafeURL
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(AssetURL(relativePath))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(assetURL(relativePath))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/assets.templ`, Line: 13, Col: 53}
 		}
@@ -85,7 +85,7 @@ func ModuleScriptLink(relativePath string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(AssetURL(relativePath))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(assetURL(relativePath))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/assets.templ`, Line: 17, Col: 51}
 		}

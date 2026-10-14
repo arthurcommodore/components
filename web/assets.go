@@ -16,7 +16,7 @@ func returnVersion(filePath string) (error, string) {
 	return nil, hex.EncodeToString(sha[:6])
 }
 
-func ReturnContent(filePath string) (string, error) {
+func returnContent(filePath string) (string, error) {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return "", err
@@ -25,7 +25,7 @@ func ReturnContent(filePath string) (string, error) {
 	return string(content), nil
 }
 
-func AssetURL(filePath string) string {
+func assetURL(filePath string) string {
 	err, version := returnVersion(filePath)
 	if err != nil {
 		version = "none"
