@@ -2,38 +2,42 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+	"time"
 )
 
-func readLanguageFiles(path string, languages []os.DirEntry) []os.DirEntry {
-	files, err := os.ReadDir(path)
-	if err != nil {
-		return languages
-	}
-
-	for _, file := range files {
-
-		if file.IsDir() && file.Name() == "languages" {
-			result, err := os.ReadDir(filepath.Join(path, file.Name()))
-			if err != nil {
-				continue
-			}
-
-			languages = append(languages, result...)
-			continue
-		}
-
-		if file.IsDir() {
-			languages = readLanguageFiles(filepath.Join(path, file.Name()), languages)
-		}
-	}
-	return languages
+type Event struct {
+	Mensagem string
 }
 
 func main() {
-	files := readLanguageFiles("./", []os.DirEntry{})
-	for _, file := range files {
-		fmt.Println(file.Name())
+	// Criamos um channel com buffer para 3 mensagens
+	// Se gerarem 3 mensagens rápidas, elas entram sem travar a goroutine que envia.
+	canal := make(chan Event, 3)
+
+	// Goroutine simulando o sistema gerando eventos sem parar
+	go func() {
+		for i := 1; i <= 5; i++ {
+			canal <- Event{Mensagem: fmt.Sprintf("Evento #%d", i)}
+			fmt.Printf(">> Enviado para o buffer: Evento #%d\n", i)
+		}
+	}()
+
+	// O cliente lendo as mensagens em um loop infinito/continuo
+	// Dando um tempo para simular o recebimento gradual
+	time.Sleep(500 * time.Millisecond)
+
+	fmt.Println("\n-- Cliente consumindo do channel --")
+
+	// Usamos um loop para esvaziar o channel conforme chegam
+	for evento := range canal {
+		fmt.Printf("<< Cliente recebeu: %s\n", evento.Mensagem)
+
+		// Condição para parar o loop neste exemplo simples
+		if evento.Mensagem == "Evento #5" {
+			break
+		}
 	}
 }
+
+// Depois pessoas podem ver a parede RLock mas quando todas terminarem de ver o pintou vai dar um Lock
+// para alterar a cor

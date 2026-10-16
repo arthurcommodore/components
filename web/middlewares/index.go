@@ -2,6 +2,8 @@ package middlewares
 
 import (
 	"net/http"
+
+	"github.com/arthurcommodore/components/web/utils"
 )
 
 type Middleware func(http.Handler) http.Handler
@@ -21,5 +23,14 @@ func NoCache(next http.Handler) http.Handler {
 		w.Header().Set("Pragma", "no-cache")
 		w.Header().Set("Expires", "0")
 		next.ServeHTTP(w, r)
+	})
+}
+
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := utils.GetCookie(r, "session")
+		if err != nil && session != "" {
+			next.ServeHTTP(w, r)
+		}
 	})
 }

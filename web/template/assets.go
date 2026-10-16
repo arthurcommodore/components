@@ -1,4 +1,4 @@
-package html
+package template
 
 import (
 	"crypto/sha256"

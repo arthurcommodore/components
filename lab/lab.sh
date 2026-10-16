@@ -1,2 +1,2 @@
 pwd
-go run test/cmd/main.go
+go run lab/cmd/main.go
