@@ -8,7 +8,8 @@ import (
 // SSE Serve-Sent-Event
 
 type Event struct {
-	ID string `json:"id"`
+	ID   string `json:"id"`
+	Data string `json:"data"`
 }
 
 type Hub struct {
@@ -79,7 +80,7 @@ func (h *Hub) Send(id string, evt Event) {
 
 	for _, ch := range channels {
 		select {
-		case <-ch:
+		case ch <- evt:
 		default:
 		}
 	}

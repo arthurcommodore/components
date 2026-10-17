@@ -8,7 +8,7 @@ import (
 )
 
 func CreateCookie(cookie http.Cookie, w http.ResponseWriter, r *http.Request) {
-	cookie.HttpOnly = isHTTPS(r)
+	cookie.HttpOnly = IsHTTPS(r)
 	http.SetCookie(w, &cookie)
 }
 
@@ -23,7 +23,7 @@ func SetSessionCookie(w http.ResponseWriter, r *http.Request) {
 		Value:    token,
 		HttpOnly: true,
 		Expires:  time.Now().Add(48 * time.Hour),
-		Secure:   isHTTPS(r),
+		Secure:   IsHTTPS(r),
 		Path:     "/",
 	}, w, r)
 }

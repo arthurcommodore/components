@@ -2,42 +2,64 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
-type Event struct {
-	Mensagem string
+type QuadroDeAvisos struct {
+	mu    sync.RWMutex
+	aviso string
 }
 
 func main() {
-	// Criamos um channel com buffer para 3 mensagens
-	// Se gerarem 3 mensagens rápidas, elas entram sem travar a goroutine que envia.
-	canal := make(chan Event, 3)
+	quadro := &QuadroDeAvisos{
+		aviso: "Bem-vindos ao projeto!",
+	}
 
-	// Goroutine simulando o sistema gerando eventos sem parar
+	var wg sync.WaitGroup
+
+	// --- 1. SIMULANDO MÚLTIPLAS LEITURAS (RLock / RUnlock) ---
+	// Vários funcionários podem LER o quadro ao MESMO TEMPO sem atrapalhar ninguém.
+	fmt.Println("=== INÍCIO DAS LEITURAS SIMULTÂNEAS ===")
+	for i := 1; i <= 3; i++ {
+		wg.Add(1)
+		go func(id int) {
+			defer wg.Done()
+
+			// RLock = Read Lock (Bloqueio de Leitura)
+			// Vários RLock podem acontecer em paralelo. Só bloqueia se alguém estiver ESCREVENDO.
+			quadro.mu.RLock()
+			defer quadro.mu.RUnlock()
+
+			fmt.Printf("[Funcionário %d] Lendo o quadro: '%s'\n", id, quadro.aviso)
+			time.Sleep(500 * time.Millisecond) // Simula o tempo lendo
+		}(i)
+	}
+
+	wg.Wait() // Espera todo mundo terminar de ler
+
+	// --- 2. SIMULANDO ESCRITA EXCLUSIVA (Lock / Unlock) ---
+	// Quando o chefe vai ESCREVER, ele tranca TUDO. Ninguém mais pode ler ou escrever até ele terminar.
+	fmt.Println("\n=== O CHEFE VAI ATUALIZAR O QUADRO ===")
+	wg.Add(1)
 	go func() {
-		for i := 1; i <= 5; i++ {
-			canal <- Event{Mensagem: fmt.Sprintf("Evento #%d", i)}
-			fmt.Printf(">> Enviado para o buffer: Evento #%d\n", i)
-		}
+		defer wg.Done()
+
+		// Lock = Write Lock (Bloqueio Total / Exclusivo)
+		// Ninguém mais entra aqui nem para ler (`RLock`) nem para escrever (`Lock`).
+		quadro.mu.Lock()
+		defer quadro.mu.Unlock()
+
+		fmt.Println("[Chefe] Escrevendo no quadro...")
+		quadro.aviso = "Aviso importante: Reunião às 14h!"
+		time.Sleep(1 * time.Second)
+		fmt.Println("[Chefe] Terminou de escrever.")
 	}()
 
-	// O cliente lendo as mensagens em um loop infinito/continuo
-	// Dando um tempo para simular o recebimento gradual
-	time.Sleep(500 * time.Millisecond)
+	wg.Wait()
 
-	fmt.Println("\n-- Cliente consumindo do channel --")
-
-	// Usamos um loop para esvaziar o channel conforme chegam
-	for evento := range canal {
-		fmt.Printf("<< Cliente recebeu: %s\n", evento.Mensagem)
-
-		// Condição para parar o loop neste exemplo simples
-		if evento.Mensagem == "Evento #5" {
-			break
-		}
-	}
+	// --- 3. LENDO O NOVO AVISO ---
+	quadro.mu.RLock()
+	fmt.Printf("\n[Novo Estado] Quadro diz: '%s'\n", quadro.aviso)
+	quadro.mu.RUnlock()
 }
-
-// Depois pessoas podem ver a parede RLock mas quando todas terminarem de ver o pintou vai dar um Lock
-// para alterar a cor
