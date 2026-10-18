@@ -2,7 +2,9 @@ package language
 
 import (
 	"encoding/json"
+	"log"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -13,27 +15,13 @@ type Language struct {
 }
 
 func NewLanguage(pathLocale string, defaultLanguage string) Language {
-	_pathlocale := pathLocale
-	if pathLocale != "" && pathLocale[len(pathLocale)-1] != '/' {
-		_pathlocale = pathLocale + "/"
-	}
 	language := Language{
-		pathLocale:      _pathlocale,
+		pathLocale:      pathLocale,
 		localeCache:     make(map[string]map[string]string),
 		defaultLanguage: defaultLanguage,
 	}
 	language.injectLocaleCache()
 	return language
-}
-
-func (*Language) detectLangByPath(path string) string {
-	parts := strings.Split(strings.Trim(path, "/"), "/")
-	if len(parts) == 0 {
-		return ""
-	}
-
-	lang := parts[0]
-	return strings.ToLower(strings.TrimSpace(lang))
 }
 
 func (l *Language) loadLocale(path string) map[string]string {
@@ -44,8 +32,8 @@ func (l *Language) loadLocale(path string) map[string]string {
 
 	dict := map[string]string{}
 	for _, f := range files {
-		content, err := os.ReadFile(l.pathLocale + f.Name())
-		if err == nil {
+		content, err := os.ReadFile(filepath.Join(path, f.Name()))
+		if err != nil {
 			continue
 		}
 
@@ -61,16 +49,13 @@ func (l *Language) loadLocale(path string) map[string]string {
 func (l *Language) injectLocaleCache() {
 	langsDir, error := os.ReadDir(l.pathLocale)
 	if error != nil {
-
+		log.Fatalf("Error injectLocaleCache language pathLocale: %s", l.pathLocale)
 	}
-	for _, dir := range langsDir {
-		dirs, error := os.ReadDir(dir.Name())
-		if error != nil {
-
+	for _, lang := range langsDir {
+		if !lang.IsDir() {
+			continue
 		}
-		for _, dir := range dirs {
-			l.localeCache[dir.Name()] = l.loadLocale(dir.Name())
-		}
+		l.localeCache[lang.Name()] = l.loadLocale(filepath.Join(l.pathLocale, lang.Name()))
 	}
 }
 
