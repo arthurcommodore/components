@@ -68,7 +68,7 @@ func (h *Hub) Send(id string, evt Event) {
 	h.mu.RLock()
 	conns, ok := h.clients[id]
 	if !ok {
-		h.mu.Unlock()
+		h.mu.RUnlock()
 		return
 	}
 
@@ -76,7 +76,7 @@ func (h *Hub) Send(id string, evt Event) {
 	for _, ch := range conns {
 		channels = append(channels, ch)
 	}
-	h.mu.Unlock()
+	h.mu.RUnlock()
 
 	for _, ch := range channels {
 		select {
