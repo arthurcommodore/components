@@ -13,7 +13,7 @@ func Chain(middlewares ...func(http.Handler) http.Handler) func(http.Handler) ht
 		for i := len(middlewares) - 1; i >= 0; i-- {
 			final = middlewares[i](final)
 		}
-		return http.HandlerFunc(final.ServeHTTP)
+		return final
 	}
 }
 
