@@ -59,7 +59,9 @@ func (l *Language) injectLocaleCache() {
 	}
 }
 
-func (l *Language) Translator(lang string) func(key string, params ...string) string {
+type Translator func(key string, params ...string) string
+
+func (l *Language) Translator(lang string) Translator {
 	translatorLang := l.localeCache[lang]
 	return func(key string, params ...string) string {
 		value, ok := translatorLang[strings.TrimSpace(key)]
