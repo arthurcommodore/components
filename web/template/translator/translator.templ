@@ -1,0 +1,178 @@
+package template
+
+import "github.com/arthurcommodore/components/language"
+
+templ TranslatorButton(language language.Language) {
+	<div class="containerLanguage">
+		<script>
+
+			function toggleLanguage(button) {
+              const dropdown = document.querySelector(".dropdown");
+
+              if (dropdown.style.display == "block") {
+                dropdown.style.display = "none";
+                return;
+              }
+              dropdown.style.display = "block";
+			}
+
+			function selectLanguage(li) {
+              const dropdown = document.querySelector(".dropdown");
+
+              dropdown.style.display = "none";
+			}
+
+			document.addEventListener("click", (event) => {
+              const button = document.querySelector(".lang-btn");
+              const dropdown = document.querySelector(".dropdown");
+
+              if (
+                !button.contains(event.target) &&
+                !dropdown.contains(event.target)
+              ) {
+                dropdown.style.display = "none";
+              }
+  		    });
+		</script>
+		<style>
+			.lang-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                min-height: 48px;
+                padding: 0 20px;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                background: #ffffff;
+                color: #374151;
+                font-family: inherit;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow:
+                    0 2px 4px rgba(0, 0, 0, 0.04),
+                    0 1px 2px rgba(0, 0, 0, 0.03);
+                transition:
+                    background 0.2s ease,
+                    border-color 0.2s ease,
+                    box-shadow 0.2s ease,
+                    transform 0.2s ease;
+            }
+
+			.lang-btn svg {
+                width: 21px;
+                height: 21px;
+                flex-shrink: 0;
+                color: currentColor;
+                transition: transform 0.25s ease;
+            }
+
+            .lang-btn:hover {
+                background: #f9fafb;
+                border-color: #d1d5db;
+                box-shadow:
+                    0 4px 10px rgba(0, 0, 0, 0.07),
+                    0 2px 4px rgba(0, 0, 0, 0.04);
+                transform: translateY(-2px);
+            }
+
+            .lang-btn:hover svg {
+                transform: rotate(12deg);
+            }
+
+            .lang-btn:active {
+                background: #f3f4f6;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+                transform: translateY(0) scale(0.98);
+            }
+
+            .lang-btn:focus-visible {
+                outline: 2px solid #9ca3af;
+                outline-offset: 3px;
+            }
+
+            .containerLanguage {
+                position: relative;
+                display: inline-block;
+            }
+
+            .dropdown {
+                display: none;
+                position: absolute;
+                top: calc(100% + 8px);
+                right: 0;
+                min-width: 100%;
+                padding: 5px;
+                background: #fff;
+                border: 1px solid #e5e7eb;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                z-index: 10;
+
+                ul {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+                }
+
+                li {
+                    padding: 0;
+                    border-radius: 6px;
+                    transition: background 0.15s ease;
+
+                    &:hover {
+                        background: #f3f4f6;
+                    }
+
+                    a {
+                        display: block;
+                        width: 100%;
+                        padding: 9px 12px;
+                        color: #374151;
+                        font-size: 14px;
+                        text-decoration: none;
+                    }
+                }
+            }
+		</style>
+		<button
+			onclick="toggleLanguage(this)"
+			class="lang-btn"
+			type="button"
+			aria-label="Selecionar idioma"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="lucide lucide-globe preview-icon"
+			>
+				<circle cx="12" cy="12" r="10"></circle>
+				<path
+					d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"
+				></path>
+				<path d="M2 12h20"></path>
+			</svg>
+			<span>{ language.DefaultLanguage }</span>
+		</button>
+		<div class="dropdown">
+			<ul>
+				for _, path := range language.Paths {
+					<li>
+						<a href={ "/" + path }>{ path }</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</div>
+}

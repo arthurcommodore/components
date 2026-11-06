@@ -51,35 +51,4 @@
     border-radius: var(--radius);
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
-
-  .btn {
-    background-color: var(--color-primary);
-    color: #ffffff;
-    border: none;
-    padding: var(--space-sm) var(--space-md);
-    border-radius: calc(var(--radius) / 2);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .btn:hover {
-    background-color: var(--color-primary-hover);
-  }
-
-  .card {
-    background-color: var(--color-surface);
-    padding: var(--space-lg);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-  }
-
-  .card h2 {
-    margin-bottom: var(--space-sm);
-    color: var(--color-text);
-  }
-
-  .card p {
-    color: var(--color-text-muted);
-  }
 }

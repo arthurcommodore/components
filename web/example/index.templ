@@ -1,29 +1,26 @@
 package example
 
-import "github.com/arthurcommodore/components/web/template/assets"
+import (
+	"github.com/arthurcommodore/components/language"
+	assets_template "github.com/arthurcommodore/components/web/template/assets"
+	translator_template "github.com/arthurcommodore/components/web/template/translator"
+)
 
+templ Page(language language.Language) {
 
-
-templ Page() {
 	<!DOCTYPE html>
 	<html lang="pt-BR">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Meu Projeto Base</title>
-			@template.Style("web/example/style.css")
+			@assets_template.Style("web/example/style.css")
 		</head>
 		<body>
 			<header class="header">
-				<h1>Meu Site de Cores & Layers</h1>
-				<button class="btn">Ação Principal</button>
+				<h1>{language.Translator("title")}</h1>
+				@translator_template.TranslatorButton(language)
 			</header>
-			<main class="main-content">
-				<section class="card">
-					<h2>Card de Exemplo</h2>
-					<p>Este card usa a estrutura de camadas e variáveis CSS de forma simples e organizada.</p>
-				</section>
-			</main>
 		</body>
 	</html>
 }

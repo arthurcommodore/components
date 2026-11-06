@@ -2,7 +2,9 @@ package main
 
 import (
 	"net/http"
+	"strings"
 
+	"github.com/arthurcommodore/components/language"
 	"github.com/arthurcommodore/components/web/example"
 	"github.com/arthurcommodore/components/web/middlewares"
 )
@@ -12,9 +14,17 @@ func main() {
 
 	pageHome := middlewares.Chain(middlewares.NoCache)
 
-	// Handler protegido pelo middleware
 	mux.Handle("GET /", pageHome(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		err := example.Page().Render(r.Context(), w)
+		lang := language.NewLanguage("lab/languages", "pt")
+
+		currentLanguage := strings.TrimPrefix(r.URL.Path, "/")
+
+		if currentLanguage == "" {
+			currentLanguage = lang.DefaultLanguage
+		}
+
+		lang.DefaultLanguage = currentLanguage
+		err := example.Page(lang).Render(r.Context(), w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}

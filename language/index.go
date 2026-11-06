@@ -11,14 +11,16 @@ import (
 type Language struct {
 	pathLocale      string ""
 	localeCache     map[string]map[string]string
-	defaultLanguage string
+	DefaultLanguage string
+	Paths           []string
 }
 
 func NewLanguage(pathLocale string, defaultLanguage string) Language {
 	language := Language{
 		pathLocale:      pathLocale,
 		localeCache:     make(map[string]map[string]string),
-		defaultLanguage: defaultLanguage,
+		DefaultLanguage: defaultLanguage,
+		Paths:           []string{"pt", "en", "es"},
 	}
 	language.injectLocaleCache()
 	return language
@@ -59,19 +61,15 @@ func (l *Language) injectLocaleCache() {
 	}
 }
 
-type Translator func(key string, params ...string) string
-
-func (l *Language) Translator(lang string) Translator {
-	translatorLang := l.localeCache[lang]
-	return func(key string, params ...string) string {
-		value, ok := translatorLang[strings.TrimSpace(key)]
-		if !ok {
-			return "[" + key + "]"
-		}
-
-		for i := 0; i < len(params)-1; i += 2 {
-			value = strings.ReplaceAll(value, params[i], params[i+1])
-		}
-		return value
+func (l *Language) Translator(key string, params ...string) string {
+	translatorLang := l.localeCache[l.DefaultLanguage]
+	value, ok := translatorLang[strings.TrimSpace(key)]
+	if !ok {
+		return "[" + key + "]"
 	}
+
+	for i := 0; i < len(params)-1; i += 2 {
+		value = strings.ReplaceAll(value, params[i], params[i+1])
+	}
+	return value
 }
