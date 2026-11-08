@@ -7,9 +7,8 @@ import (
 )
 
 func main() {
-	language := language.NewLanguage("lab/languages", "pt")
+	l := language.NewLanguage("lab/languages", "pt")
 
-	tradPt := language.Translator("pt")
-	text := tradPt("teste")
+	text := l.Translator("teste")
 	fmt.Println(text)
 }
