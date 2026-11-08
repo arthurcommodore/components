@@ -2,7 +2,7 @@ package template
 
 import "github.com/arthurcommodore/components/language"
 
-templ TranslatorButton(language language.Language) {
+templ TranslatorButton(l language.Language) {
 	<div class="containerLanguage">
 		<script>
 
@@ -163,11 +163,11 @@ templ TranslatorButton(language language.Language) {
 				></path>
 				<path d="M2 12h20"></path>
 			</svg>
-			<span>{ language.DefaultLanguage }</span>
+			<span>{ l.DefaultLanguage }</span>
 		</button>
 		<div class="dropdown">
 			<ul>
-				for _, path := range language.Paths {
+				for _, path := range l.Paths {
 					<li>
 						<a href={ "/" + path }>{ path }</a>
 					</li>

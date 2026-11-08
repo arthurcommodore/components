@@ -9,6 +9,6 @@ import (
 func main() {
 	l := language.NewLanguage("lab/languages", "pt")
 
-	text := l.Translator("teste")
+	text := l.Translate("teste")
 	fmt.Println(text)
 }

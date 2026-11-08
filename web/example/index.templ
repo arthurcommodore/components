@@ -6,7 +6,7 @@ import (
 	translator_template "github.com/arthurcommodore/components/web/template/translator"
 )
 
-templ Page(language language.Language) {
+templ Page(l language.Language) {
 
 	<!DOCTYPE html>
 	<html lang="pt-BR">
@@ -18,8 +18,8 @@ templ Page(language language.Language) {
 		</head>
 		<body>
 			<header class="header">
-				<h1>{language.Translator("title")}</h1>
-				@translator_template.TranslatorButton(language)
+				<h1>{l.Translate("title")}</h1>
+				@translator_template.TranslatorButton(l)
 			</header>
 		</body>
 	</html>
