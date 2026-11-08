@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/arthurcommodore/components/language"
 	"github.com/arthurcommodore/components/web/example"
@@ -14,16 +13,17 @@ func main() {
 
 	pageHome := middlewares.Chain(middlewares.NoCache)
 
-	mux.Handle("GET /", pageHome(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("GET /{lang}", pageHome(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		lang := language.NewLanguage("lab/languages", "pt")
 
-		currentLanguage := strings.TrimPrefix(r.URL.Path, "/")
+		currentLanguage := r.PathValue("lang")
 
 		if currentLanguage == "" {
 			currentLanguage = lang.DefaultLanguage
+		} else {
+			lang.DefaultLanguage = currentLanguage
 		}
 
-		lang.DefaultLanguage = currentLanguage
 		err := example.Page(lang).Render(r.Context(), w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
